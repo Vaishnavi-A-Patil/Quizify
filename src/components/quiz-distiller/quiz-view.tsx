@@ -2,12 +2,14 @@
 
 import * as React from 'react';
 import type { Session } from '@/lib/types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { QuizCard } from './quiz-card';
 import { Skeleton } from '../ui/skeleton';
 import { cn } from '@/lib/utils';
 import { Progress } from '../ui/progress';
+import { Button } from '../ui/button';
+import { Check, RotateCcw } from 'lucide-react';
 
 type QuizViewProps = {
   session: Session;
@@ -37,10 +39,14 @@ export function QuizView({ session, isRefining }: QuizViewProps) {
   const [selectedAnswers, setSelectedAnswers] = React.useState<(string | null)[]>(
     () => Array(session.quiz.length).fill(null)
   );
+  const [isSubmitted, setIsSubmitted] = React.useState(false);
 
-  const [revealedAnswers, setRevealedAnswers] = React.useState<boolean[]>(
-    () => Array(session.quiz.length).fill(false)
-  );
+  React.useEffect(() => {
+    // Reset state when session changes
+    setSelectedAnswers(Array(session.quiz.length).fill(null));
+    setIsSubmitted(false);
+  }, [session.id, session.quiz.length]);
+
 
   const handleSelectAnswer = (questionIndex: number, answer: string) => {
     setSelectedAnswers(prev => {
@@ -50,29 +56,32 @@ export function QuizView({ session, isRefining }: QuizViewProps) {
     });
   };
 
-  const handleRevealAnswer = (questionIndex: number, isRevealed: boolean) => {
-    setRevealedAnswers(prev => {
-        const newRevealed = [...prev];
-        newRevealed[questionIndex] = isRevealed;
-        return newRevealed;
-    })
+  const handleSubmit = () => {
+    setIsSubmitted(true);
+  }
+
+  const handleReset = () => {
+    setIsSubmitted(false);
+    setSelectedAnswers(Array(session.quiz.length).fill(null));
   }
 
   const score = React.useMemo(() => {
+    if (!isSubmitted) return 0;
     return selectedAnswers.reduce((totalScore, selectedAnswer, index) => {
-      if (revealedAnswers[index] && selectedAnswer === session.quiz[index].answer) {
+      if (selectedAnswer === session.quiz[index].answer) {
         return totalScore + 1;
       }
       return totalScore;
     }, 0);
-  }, [selectedAnswers, session.quiz, revealedAnswers]);
+  }, [selectedAnswers, session.quiz, isSubmitted]);
 
   const answeredCount = React.useMemo(() => {
-    return revealedAnswers.filter(r => r).length
-  }, [revealedAnswers]);
+    return selectedAnswers.filter(r => r !== null).length
+  }, [selectedAnswers]);
   
-  const scorePercentage = answeredCount > 0 ? (score / answeredCount) * 100 : 0;
+  const scorePercentage = isSubmitted ? (score / session.quiz.length) * 100 : (answeredCount / session.quiz.length) * 100;
 
+  const allQuestionsAnswered = answeredCount === session.quiz.length;
 
   return (
     <Card className="flex flex-col h-full">
@@ -91,15 +100,15 @@ export function QuizView({ session, isRefining }: QuizViewProps) {
         />
         <Card className="mb-4">
             <CardHeader className="p-4">
-                <CardTitle className="text-lg">Score</CardTitle>
+                <CardTitle className="text-lg">{isSubmitted ? 'Final Score' : 'Progress'}</CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0">
                 <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm text-muted-foreground">{`Answered: ${answeredCount}/${session.quiz.length}`}</p>
-                    <p className="text-lg font-bold">{score} <span className='text-sm font-normal text-muted-foreground'>/ {answeredCount}</span></p>
+                    <p className="text-sm text-muted-foreground">{isSubmitted ? `You scored ${score} out of ${session.quiz.length}`: `Answered: ${answeredCount}/${session.quiz.length}`}</p>
+                    {isSubmitted && <p className="text-lg font-bold">{score} <span className='text-sm font-normal text-muted-foreground'>/ {session.quiz.length}</span></p>}
                 </div>
                 <Progress value={scorePercentage} />
-                 {answeredCount > 0 && <p className='text-xs text-muted-foreground mt-2 text-right'>{Math.round(scorePercentage)}% Correct</p>}
+                 {isSubmitted && <p className='text-xs text-muted-foreground mt-2 text-right'>{Math.round(scorePercentage)}% Correct</p>}
             </CardContent>
         </Card>
         <ScrollArea className="h-full pr-6 flex-1">
@@ -111,12 +120,25 @@ export function QuizView({ session, isRefining }: QuizViewProps) {
                 questionNumber={index + 1}
                 selectedOption={selectedAnswers[index]}
                 onSelectOption={(option) => handleSelectAnswer(index, option)}
-                onRevealChange={(isRevealed) => handleRevealAnswer(index, isRevealed)}
+                isSubmitted={isSubmitted}
                 />
             ))}
           </div>
         </ScrollArea>
       </CardContent>
+       <CardFooter className="pt-6 justify-end gap-2">
+            {isSubmitted ? (
+                <Button onClick={handleReset}>
+                    <RotateCcw className="mr-2" />
+                    Retake Quiz
+                </Button>
+            ) : (
+                <Button onClick={handleSubmit} disabled={!allQuestionsAnswered}>
+                    <Check className="mr-2" />
+                    Submit Quiz
+                </Button>
+            )}
+        </CardFooter>
     </Card>
   );
 }
