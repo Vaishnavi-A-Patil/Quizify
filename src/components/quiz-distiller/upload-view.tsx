@@ -25,7 +25,7 @@ export function UploadView({ onGenerate, loading }: UploadViewProps) {
           </div>
           <CardTitle>Generate a New Quiz</CardTitle>
           <CardDescription>
-            Upload a PDF document to automatically generate a multiple-choice
+            Upload a document (PDF, Word, image, etc.) to automatically generate a multiple-choice
             quiz based on its content.
           </CardDescription>
         </CardHeader>
@@ -37,7 +37,7 @@ export function UploadView({ onGenerate, loading }: UploadViewProps) {
                 Generating...
               </>
             ) : (
-              'Upload PDF & Generate Quiz'
+              'Upload Document & Generate Quiz'
             )}
           </Button>
           <p className="text-xs text-muted-foreground mt-4">

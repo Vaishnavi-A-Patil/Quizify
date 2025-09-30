@@ -18,16 +18,23 @@ import { Label } from '../ui/label';
 type QuizCardProps = {
   question: QuizQuestion;
   questionNumber: number;
+  selectedOption: string | null;
+  onSelectOption: (option: string) => void;
+  onRevealChange: (isRevealed: boolean) => void;
 };
 
-export function QuizCard({ question, questionNumber }: QuizCardProps) {
-  const [selectedOption, setSelectedOption] = React.useState<string | null>(null);
+export function QuizCard({ question, questionNumber, selectedOption, onSelectOption, onRevealChange }: QuizCardProps) {
   const [isAnswerRevealed, setIsAnswerRevealed] = React.useState(false);
 
   const handleOptionChange = (value: string) => {
     if (!isAnswerRevealed) {
-      setSelectedOption(value);
+      onSelectOption(value);
     }
+  };
+  
+  const handleRevealToggle = (open: boolean) => {
+    setIsAnswerRevealed(open);
+    onRevealChange(open);
   };
 
   const getOptionClass = (option: string) => {
@@ -58,7 +65,7 @@ export function QuizCard({ question, questionNumber }: QuizCardProps) {
             </div>
         </RadioGroup>
 
-        <Collapsible onOpenChange={setIsAnswerRevealed}>
+        <Collapsible onOpenChange={handleRevealToggle}>
           <CollapsibleTrigger asChild>
             <Button variant="outline" size="sm" className="w-full">
               {isAnswerRevealed ? 'Hide' : 'Reveal'} Answer
