@@ -81,8 +81,6 @@ export function QuizView({ session, isRefining }: QuizViewProps) {
   
   const scorePercentage = isSubmitted ? (score / session.quiz.length) * 100 : (answeredCount / session.quiz.length) * 100;
 
-  const allQuestionsAnswered = answeredCount === session.quiz.length;
-
   return (
     <Card className="flex flex-col h-full">
       <CardHeader>
@@ -133,7 +131,7 @@ export function QuizView({ session, isRefining }: QuizViewProps) {
                     Retake Quiz
                 </Button>
             ) : (
-                <Button onClick={handleSubmit} disabled={!allQuestionsAnswered}>
+                <Button onClick={handleSubmit}>
                     <Check className="mr-2" />
                     Submit Quiz
                 </Button>
