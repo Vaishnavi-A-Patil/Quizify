@@ -9,6 +9,7 @@
  */
 
 import {ai} from '@/ai/genkit';
+import {googleAI} from '@genkit-ai/googleai';
 import {z} from 'genkit';
 
 const GenerateQuizFromPdfInputSchema = z.object({
@@ -37,6 +38,7 @@ const prompt = ai.definePrompt({
   name: 'generateQuizFromPdfPrompt',
   input: {schema: GenerateQuizFromPdfInputSchema},
   output: {schema: GenerateQuizFromPdfOutputSchema},
+  model: googleAI.model('gemini-2.5-flash'),
   prompt: `You are an expert quiz generator. You will generate a multiple-choice quiz based on the text provided. The quiz should have approximately 10 questions, each with 4 answer options. One of the options must be the correct answer.
 
 Text: {{{pdfText}}}
