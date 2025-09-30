@@ -4,16 +4,47 @@ import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, UploadCloud } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import pdf from 'pdf-parse/lib/pdf-parse';
 
 type UploadViewProps = {
-  onGenerate: (fileName: string) => void;
+  onGenerate: (fileName: string, fileContent: string) => void;
   loading: boolean;
 };
 
 export function UploadView({ onGenerate, loading }: UploadViewProps) {
-  // Simulating a file upload
-  const handleUpload = () => {
-    onGenerate('Einsten-Bio.pdf');
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+        toast({
+            variant: 'destructive',
+            title: 'Invalid File Type',
+            description: 'Please upload a PDF file.',
+        });
+        return;
+    }
+
+    try {
+        const arrayBuffer = await file.arrayBuffer();
+        const data = await pdf(arrayBuffer);
+        onGenerate(file.name, data.text);
+    } catch (error) {
+        console.error("Error parsing PDF:", error)
+        toast({
+            variant: 'destructive',
+            title: 'Error Reading File',
+            description: 'There was a problem processing your PDF file.',
+        });
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
   };
 
   return (
@@ -25,12 +56,20 @@ export function UploadView({ onGenerate, loading }: UploadViewProps) {
           </div>
           <CardTitle>Generate a New Quiz</CardTitle>
           <CardDescription>
-            Upload a document (PDF, Word, image, etc.) to automatically generate a multiple-choice
+            Upload a document (currently PDF only) to automatically generate a multiple-choice
             quiz based on its content.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button size="lg" onClick={handleUpload} disabled={loading}>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="hidden"
+            accept="application/pdf"
+            disabled={loading}
+          />
+          <Button size="lg" onClick={handleUploadClick} disabled={loading}>
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -41,7 +80,7 @@ export function UploadView({ onGenerate, loading }: UploadViewProps) {
             )}
           </Button>
           <p className="text-xs text-muted-foreground mt-4">
-            (For demo purposes, this will use a sample document.)
+            You can upload your own PDF document.
           </p>
         </CardContent>
       </Card>

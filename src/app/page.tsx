@@ -28,10 +28,10 @@ export default function Home() {
     return sessions.find((session) => session.id === activeSessionId) ?? null;
   }, [sessions, activeSessionId]);
 
-  const handleGenerateQuiz = (fileName: string) => {
+  const handleGenerateQuiz = (fileName: string, fileContent: string) => {
     startGeneration(async () => {
       try {
-        const newSessionData = await generateQuizAction(fileName);
+        const newSessionData = await generateQuizAction(fileName, fileContent);
         const newSession: Session = {
           ...newSessionData,
           id: `session-${Date.now()}`,
