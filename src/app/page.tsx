@@ -77,6 +77,9 @@ export default function Home() {
                     ...session.chatHistory,
                     { role: 'model', content: assistantMessage },
                   ],
+                  // Reset quiz state when it's refined
+                  selectedAnswers: Array(refinedQuiz.length).fill(null),
+                  isSubmitted: false,
                 }
               : session
           )
@@ -90,6 +93,12 @@ export default function Home() {
         });
       }
     });
+  };
+
+  const updateSession = (sessionId: string, updates: Partial<Session>) => {
+    setSessions(prev => 
+      prev.map(s => (s.id === sessionId ? { ...s, ...updates } : s))
+    );
   };
 
   return (
@@ -113,6 +122,7 @@ export default function Home() {
                 key={activeSession.id}
                 session={activeSession}
                 isRefining={isRefining}
+                onUpdateSession={updateSession}
               />
               <ChatView
                 session={activeSession}

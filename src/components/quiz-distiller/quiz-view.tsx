@@ -14,6 +14,7 @@ import { Check, RotateCcw } from 'lucide-react';
 type QuizViewProps = {
   session: Session;
   isRefining: boolean;
+  onUpdateSession: (sessionId: string, updates: Partial<Pick<Session, 'selectedAnswers' | 'isSubmitted'>>) => void;
 };
 
 const QuizSkeleton = () => (
@@ -35,34 +36,24 @@ const QuizSkeleton = () => (
     </div>
 )
 
-export function QuizView({ session, isRefining }: QuizViewProps) {
-  const [selectedAnswers, setSelectedAnswers] = React.useState<(string | null)[]>(
-    () => Array(session.quiz.length).fill(null)
-  );
-  const [isSubmitted, setIsSubmitted] = React.useState(false);
-
-  React.useEffect(() => {
-    // Reset state when session changes
-    setSelectedAnswers(Array(session.quiz.length).fill(null));
-    setIsSubmitted(false);
-  }, [session.id, session.quiz.length]);
-
+export function QuizView({ session, isRefining, onUpdateSession }: QuizViewProps) {
+  const { selectedAnswers, isSubmitted } = session;
 
   const handleSelectAnswer = (questionIndex: number, answer: string) => {
-    setSelectedAnswers(prev => {
-      const newAnswers = [...prev];
-      newAnswers[questionIndex] = answer;
-      return newAnswers;
-    });
+    const newAnswers = [...selectedAnswers];
+    newAnswers[questionIndex] = answer;
+    onUpdateSession(session.id, { selectedAnswers: newAnswers });
   };
 
   const handleSubmit = () => {
-    setIsSubmitted(true);
+    onUpdateSession(session.id, { isSubmitted: true });
   }
 
   const handleReset = () => {
-    setIsSubmitted(false);
-    setSelectedAnswers(Array(session.quiz.length).fill(null));
+    onUpdateSession(session.id, { 
+      isSubmitted: false,
+      selectedAnswers: Array(session.quiz.length).fill(null) 
+    });
   }
 
   const score = React.useMemo(() => {

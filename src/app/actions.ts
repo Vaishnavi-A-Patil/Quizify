@@ -33,6 +33,8 @@ export async function generateQuizAction(
       fileName,
       quiz: quizData.quizQuestions,
       chatHistory: [],
+      selectedAnswers: Array(quizData.quizQuestions.length).fill(null),
+      isSubmitted: false,
     };
   } catch (error) {
     console.error('Error generating quiz:', error);

@@ -15,4 +15,6 @@ export interface Session {
   quiz: QuizQuestion[];
   chatHistory: ChatMessage[];
   createdAt: Date;
+  selectedAnswers: (string | null)[];
+  isSubmitted: boolean;
 }
