@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, UploadCloud } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import pdf from 'pdf-parse/lib/pdf-parse';
 
 type UploadViewProps = {
   onGenerate: (fileName: string, fileContent: string) => void;
@@ -31,14 +30,14 @@ export function UploadView({ onGenerate, loading }: UploadViewProps) {
 
     try {
         const arrayBuffer = await file.arrayBuffer();
-        const data = await pdf(arrayBuffer);
-        onGenerate(file.name, data.text);
+        const base64String = Buffer.from(arrayBuffer).toString('base64');
+        onGenerate(file.name, base64String);
     } catch (error) {
-        console.error("Error parsing PDF:", error)
+        console.error("Error processing file:", error)
         toast({
             variant: 'destructive',
             title: 'Error Reading File',
-            description: 'There was a problem processing your PDF file.',
+            description: 'There was a problem processing your file.',
         });
     }
   };

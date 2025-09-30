@@ -4,13 +4,26 @@ import { generateQuizFromPdf } from '@/ai/flows/generate-quiz-from-pdf';
 import { refineQuiz } from '@/ai/flows/refine-quiz-via-chat';
 import type { QuizQuestion, Session } from '@/lib/types';
 import { z } from 'zod';
+import pdf from 'pdf-parse/lib/pdf-parse';
+
+async function extractTextFromPdf(fileContentBase64: string): Promise<string> {
+  try {
+    const pdfBuffer = Buffer.from(fileContentBase64, 'base64');
+    const data = await pdf(pdfBuffer);
+    return data.text;
+  } catch (error) {
+    console.error('Error parsing PDF on server:', error);
+    throw new Error('Failed to extract text from the PDF file.');
+  }
+}
 
 export async function generateQuizAction(
   fileName: string,
   fileContent: string
 ): Promise<Omit<Session, 'id' | 'createdAt'>> {
   try {
-    const quizData = await generateQuizFromPdf({ pdfText: fileContent });
+    const pdfText = await extractTextFromPdf(fileContent);
+    const quizData = await generateQuizFromPdf({ pdfText });
     
     if (!quizData || !quizData.quizQuestions) {
       throw new Error('Failed to generate quiz.');
