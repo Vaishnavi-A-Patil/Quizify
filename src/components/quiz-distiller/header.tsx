@@ -2,6 +2,7 @@
 
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Logo } from '../icons';
+import { ThemeToggle } from '../theme-toggle';
 
 export function AppHeader() {
   return (
@@ -10,6 +11,9 @@ export function AppHeader() {
       <div className="flex items-center gap-2">
         <Logo className="h-6 w-6 text-primary" />
         <h1 className="text-lg font-semibold tracking-tight">QuizDistiller</h1>
+      </div>
+      <div className="ml-auto">
+        <ThemeToggle />
       </div>
     </header>
   );
