@@ -31,7 +31,7 @@ export function SidebarContent({
   const { state } = useSidebar();
   
   return (
-    <SidebarContentArea className="bg-card/70 backdrop-blur-sm">
+    <SidebarContentArea>
       <SidebarHeader>
         <div className="flex items-center gap-2">
           <Logo className="w-6 h-6 text-primary" />
