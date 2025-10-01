@@ -51,7 +51,7 @@ function FileUpload({ onGenerate, loading }: { onGenerate: (fileName: string, fi
 
   return (
     <div
-      className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
+      className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg cursor-pointer hover:border-primary/50 transition-colors bg-background/50"
       onClick={handleUploadClick}
     >
       <UploadCloud className="w-12 h-12 text-muted-foreground" />
@@ -147,7 +147,7 @@ export function UploadView({ onGenerate, loading }: UploadViewProps) {
 
   return (
     <div className="flex-1 flex items-center justify-center">
-      <Card className="w-full max-w-2xl text-center shadow-lg bg-card">
+      <Card className="w-full max-w-2xl text-center shadow-lg bg-card/70 backdrop-blur-sm border-border/20">
         <CardHeader>
           <div className="mx-auto bg-primary/10 text-primary p-3 rounded-full mb-4">
             <UploadCloud className="w-10 h-10" />

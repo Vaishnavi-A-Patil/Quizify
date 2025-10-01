@@ -32,7 +32,7 @@ export function QuizCard({ question, questionNumber, selectedOption, onSelectOpt
   };
 
   return (
-    <Card>
+    <Card className="bg-background/50">
       <CardHeader>
         <CardTitle className="text-base font-semibold">
           {questionNumber}. {question.question}

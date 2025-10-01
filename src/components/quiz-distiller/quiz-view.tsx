@@ -73,7 +73,7 @@ export function QuizView({ session, isRefining, onUpdateSession }: QuizViewProps
   const scorePercentage = isSubmitted ? (score / session.quiz.length) * 100 : (answeredCount / session.quiz.length) * 100;
 
   return (
-    <Card className="flex flex-col h-full bg-card">
+    <Card className="flex flex-col h-full bg-card/70 backdrop-blur-sm border-border/20">
       <CardHeader>
         <CardTitle>{session.fileName}</CardTitle>
         <CardDescription>
@@ -87,7 +87,7 @@ export function QuizView({ session, isRefining, onUpdateSession }: QuizViewProps
             isRefining ? 'opacity-100' : 'opacity-0 pointer-events-none'
           )}
         />
-        <Card className="mb-4">
+        <Card className="mb-4 bg-background/50">
             <CardHeader className="p-4">
                 <CardTitle className="text-lg">{isSubmitted ? 'Final Score' : 'Progress'}</CardTitle>
             </CardHeader>

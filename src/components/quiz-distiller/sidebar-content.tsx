@@ -31,12 +31,12 @@ export function SidebarContent({
   const { state } = useSidebar();
   
   return (
-    <SidebarContentArea>
+    <SidebarContentArea className="bg-card/70 backdrop-blur-sm">
       <SidebarHeader>
         <div className="flex items-center gap-2">
           <Logo className="w-6 h-6 text-primary" />
           {state === 'expanded' && (
-            <span className="font-semibold text-lg">QuizDistiller</span>
+            <span className="font-semibold text-lg">Quizify</span>
           )}
         </div>
       </SidebarHeader>

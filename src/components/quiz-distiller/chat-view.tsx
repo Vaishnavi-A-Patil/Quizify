@@ -39,7 +39,7 @@ export function ChatView({ session, onSendMessage, isRefining }: ChatViewProps) 
   };
 
   return (
-    <Card className="flex flex-col h-full bg-card">
+    <Card className="flex flex-col h-full bg-card/70 backdrop-blur-sm border-border/20">
       <CardHeader>
         <CardTitle>Refine Quiz</CardTitle>
       </CardHeader>
