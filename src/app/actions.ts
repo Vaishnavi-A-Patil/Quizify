@@ -6,6 +6,7 @@ import type { QuizQuestion, Session } from '@/lib/types';
 import { z } from 'zod';
 import pdf from 'pdf-parse/lib/pdf-parse';
 import { generateQuizFromYoutube } from '@/ai/flows/generate-quiz-from-youtube';
+import { generateQuizFromText } from '@/ai/flows/generate-quiz-from-text';
 
 async function extractTextFromPdf(fileContentBase64: string): Promise<string> {
   try {
@@ -19,7 +20,7 @@ async function extractTextFromPdf(fileContentBase64: string): Promise<string> {
 }
 
 export async function generateQuizAction(
-  inputType: 'file' | 'url',
+  inputType: 'file' | 'url' | 'text',
   data: string,
   fileName?: string
 ): Promise<Omit<Session, 'id' | 'createdAt'>> {
@@ -36,6 +37,9 @@ export async function generateQuizAction(
       const youtubeData = await generateQuizFromYoutube({ youtubeUrl: data });
       quizData = { quizQuestions: youtubeData.quizQuestions };
       sessionFileName = youtubeData.videoTitle;
+    } else if (inputType === 'text') {
+        quizData = await generateQuizFromText({ text: data });
+        sessionFileName = 'Custom Text Quiz';
     } else {
       throw new Error('Invalid input type for quiz generation.');
     }

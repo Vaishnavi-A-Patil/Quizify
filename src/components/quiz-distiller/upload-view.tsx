@@ -120,18 +120,34 @@ function UrlUpload({ onGenerate, loading }: Omit<UploadViewProps, 'onGenerate'> 
     )
 }
 
+function TextUpload({ onGenerate, loading }: Omit<UploadViewProps, 'onGenerate'> & { onGenerate: (text: string) => void }) {
+    const [text, setText] = React.useState('');
+
+    const handleGenerate = () => {
+        if (text.trim()) {
+            onGenerate(text);
+        }
+    }
+
+    return (
+        <div className="flex flex-col gap-4">
+            <Textarea 
+                placeholder="Paste your text here..." 
+                rows={8}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                disabled={loading}
+            />
+            <Button onClick={handleGenerate} disabled={loading || !text.trim()}>
+                {loading ? <Loader2 className="mr-2 animate-spin" /> : null}
+                Generate from Text
+            </Button>
+        </div>
+    )
+}
+
 
 export function UploadView({ onGenerate, loading }: UploadViewProps) {
-  
-  const { toast } = useToast();
-
-  const showNotImplementedToast = () => {
-    toast({
-      variant: 'default',
-      title: 'Feature Not Implemented',
-      description: 'This feature is coming soon!',
-    });
-  }
 
   return (
     <div className="flex-1 flex items-center justify-center">
@@ -171,10 +187,10 @@ export function UploadView({ onGenerate, loading }: UploadViewProps) {
                 />
               </TabsContent>
               <TabsContent value="text">
-                <div className="flex flex-col gap-4">
-                    <Textarea placeholder="Paste your text here..." rows={8}/>
-                    <Button onClick={showNotImplementedToast}>Generate from Text</Button>
-                </div>
+                <TextUpload
+                    onGenerate={(text) => onGenerate('text', text, 'Custom Text Quiz')}
+                    loading={loading}
+                />
               </TabsContent>
             </Tabs>
           )}
