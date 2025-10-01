@@ -29,7 +29,7 @@ export default function Home() {
   }, [sessions, activeSessionId]);
 
   const handleGenerateQuiz = (
-    inputType: 'file' | 'url',
+    inputType: 'file' | 'url' | 'text' | 'youtube',
     data: string,
     fileName?: string
   ) => {

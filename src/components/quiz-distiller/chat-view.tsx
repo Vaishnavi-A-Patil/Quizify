@@ -39,7 +39,7 @@ export function ChatView({ session, onSendMessage, isRefining }: ChatViewProps) 
   };
 
   return (
-    <Card className="flex flex-col h-full">
+    <Card className="flex flex-col h-full glassmorphism-card">
       <CardHeader>
         <CardTitle>Refine Quiz</CardTitle>
       </CardHeader>
