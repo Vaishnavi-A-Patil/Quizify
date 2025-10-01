@@ -59,8 +59,8 @@ export default {
           DEFAULT: 'hsl(var(--sidebar-background))',
           foreground: 'hsl(var(--sidebar-foreground))',
           border: 'hsl(var(--sidebar-border))',
-          accent: 'hsl(var(--accent))',
-          'accent-foreground': 'hsl(var(--accent-foreground))',
+          accent: 'hsl(var(--primary))',
+          'accent-foreground': 'hsl(var(--primary-foreground))',
         },
       },
       borderRadius: {
