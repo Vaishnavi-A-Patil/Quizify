@@ -10,11 +10,11 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 
 type UploadViewProps = {
-  onGenerate: (inputType: 'file' | 'url' | 'text', data: string, fileName?: string) => void;
+  onGenerate: (inputType: 'file' | 'url' | 'text' | 'youtube', data: string, fileName?: string) => void;
   loading: boolean;
 };
 
-function FileUpload({ onGenerate, loading }: Omit<UploadViewProps, 'onGenerate'> & { onGenerate: (fileName: string, fileContent: string) => void }) {
+function FileUpload({ onGenerate, loading }: { onGenerate: (fileName: string, fileContent: string) => void, loading: boolean }) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -70,19 +70,15 @@ function FileUpload({ onGenerate, loading }: Omit<UploadViewProps, 'onGenerate'>
   );
 }
 
-function UrlUpload({ onGenerate, loading }: Omit<UploadViewProps, 'onGenerate'> & { onGenerate: (url: string) => void }) {
+function UrlUpload({ onGenerate, loading }: { onGenerate: (type: 'youtube' | 'url', url: string) => void, loading: boolean }) {
     const [youtubeUrl, setYoutubeUrl] = React.useState('');
     const [otherUrl, setOtherUrl] = React.useState('');
-    const { toast } = useToast();
 
     const handleGenerate = () => {
         if (youtubeUrl) {
-            onGenerate(youtubeUrl);
+            onGenerate('youtube', youtubeUrl);
         } else if (otherUrl) {
-            toast({
-                title: 'Feature Not Implemented',
-                description: 'Quiz generation from general URLs is coming soon!',
-            });
+            onGenerate('url', otherUrl);
         }
     }
 
@@ -120,7 +116,7 @@ function UrlUpload({ onGenerate, loading }: Omit<UploadViewProps, 'onGenerate'> 
     )
 }
 
-function TextUpload({ onGenerate, loading }: Omit<UploadViewProps, 'onGenerate'> & { onGenerate: (text: string) => void }) {
+function TextUpload({ onGenerate, loading }: { onGenerate: (text: string) => void, loading: boolean }) {
     const [text, setText] = React.useState('');
 
     const handleGenerate = () => {
@@ -182,7 +178,7 @@ export function UploadView({ onGenerate, loading }: UploadViewProps) {
               </TabsContent>
               <TabsContent value="url">
                 <UrlUpload 
-                  onGenerate={(url) => onGenerate('url', url)}
+                  onGenerate={(type, url) => onGenerate(type, url)}
                   loading={loading}
                 />
               </TabsContent>

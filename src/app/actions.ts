@@ -7,6 +7,7 @@ import { z } from 'zod';
 import pdf from 'pdf-parse/lib/pdf-parse';
 import { generateQuizFromYoutube } from '@/ai/flows/generate-quiz-from-youtube';
 import { generateQuizFromText } from '@/ai/flows/generate-quiz-from-text';
+import { generateQuizFromUrl } from '@/ai/flows/generate-quiz-from-url';
 
 async function extractTextFromPdf(fileContentBase64: string): Promise<string> {
   try {
@@ -20,7 +21,7 @@ async function extractTextFromPdf(fileContentBase64: string): Promise<string> {
 }
 
 export async function generateQuizAction(
-  inputType: 'file' | 'url' | 'text',
+  inputType: 'file' | 'url' | 'text' | 'youtube',
   data: string,
   fileName?: string
 ): Promise<Omit<Session, 'id' | 'createdAt'>> {
@@ -33,14 +34,19 @@ export async function generateQuizAction(
       const pdfText = await extractTextFromPdf(data);
       quizData = await generateQuizFromPdf({ pdfText });
       sessionFileName = fileName;
-    } else if (inputType === 'url') {
+    } else if (inputType === 'youtube') {
       const youtubeData = await generateQuizFromYoutube({ youtubeUrl: data });
       quizData = { quizQuestions: youtubeData.quizQuestions };
       sessionFileName = youtubeData.videoTitle;
     } else if (inputType === 'text') {
         quizData = await generateQuizFromText({ text: data });
         sessionFileName = 'Custom Text Quiz';
-    } else {
+    } else if (inputType === 'url') {
+      const urlData = await generateQuizFromUrl({ url: data });
+      quizData = { quizQuestions: urlData.quizQuestions };
+      sessionFileName = urlData.title;
+    }
+    else {
       throw new Error('Invalid input type for quiz generation.');
     }
     

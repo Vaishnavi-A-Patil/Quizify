@@ -20,14 +20,14 @@ const GenerateQuizFromYoutubeInputSchema = z.object({
 });
 export type GenerateQuizFromYoutubeInput = z.infer<typeof GenerateQuizFromYoutubeInputSchema>;
 
+const QuizQuestionSchema = z.object({
+  question: z.string().describe('The quiz question.'),
+  options: z.array(z.string()).describe('The multiple-choice options.'),
+  answer: z.string().describe('The correct answer to the question.'),
+});
+
 const GenerateQuizFromYoutubeOutputSchema = z.object({
-  quizQuestions: z.array(
-    z.object({
-      question: z.string().describe('The quiz question.'),
-      options: z.array(z.string()).describe('The multiple-choice options.'),
-      answer: z.string().describe('The correct answer to the question.'),
-    })
-  ).describe('The generated quiz questions with options and answers.'),
+  quizQuestions: z.array(QuizQuestionSchema).describe('The generated quiz questions with options and answers.'),
   videoTitle: z.string().describe('The title of the YouTube video.')
 });
 export type GenerateQuizFromYoutubeOutput = z.infer<typeof GenerateQuizFromYoutubeOutputSchema>;
@@ -36,7 +36,7 @@ export type GenerateQuizFromYoutubeOutput = z.infer<typeof GenerateQuizFromYoutu
 const prompt = ai.definePrompt({
   name: 'generateQuizFromYoutubePrompt',
   input: {schema: z.object({transcript: z.string()})},
-  output: {schema: GenerateQuizFromYoutubeOutputSchema},
+  output: {schema: z.object({quizQuestions: z.array(QuizQuestionSchema)})},
   model: googleAI.model('gemini-2.5-flash'),
   prompt: `You are an expert quiz generator. You will generate a multiple-choice quiz based on the video transcript provided. The quiz should have approximately 10 questions, each with 4 answer options. One of the options must be the correct answer.
 
@@ -62,12 +62,13 @@ const generateQuizFromYoutubeFlow = ai.defineFlow(
     
     const {output} = await prompt({transcript});
 
-    // This is a bit of a hack, but we don't have a tool to get the video title.
-    // We can't get it from the transcript, so we'll just use a placeholder for now.
-    // A better implementation would use the YouTube Data API.
+    if (!output) {
+      throw new Error('Failed to generate quiz from YouTube transcript.');
+    }
+
     return {
-      ...output!,
-      videoTitle: 'YouTube Video Quiz'
+      quizQuestions: output.quizQuestions,
+      videoTitle: 'YouTube Video Quiz' // Using a placeholder title
     };
   }
 );
