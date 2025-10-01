@@ -32,7 +32,7 @@ export function QuizCard({ question, questionNumber, selectedOption, onSelectOpt
   };
 
   return (
-    <Card className="glassmorphism-card">
+    <Card>
       <CardHeader>
         <CardTitle className="text-base font-semibold">
           {questionNumber}. {question.question}

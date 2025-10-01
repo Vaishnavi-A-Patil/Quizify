@@ -147,7 +147,7 @@ export function UploadView({ onGenerate, loading }: UploadViewProps) {
 
   return (
     <div className="flex-1 flex items-center justify-center">
-      <Card className="w-full max-w-2xl text-center shadow-lg glassmorphism-card">
+      <Card className="w-full max-w-2xl text-center shadow-lg bg-card">
         <CardHeader>
           <div className="mx-auto bg-primary/10 text-primary p-3 rounded-full mb-4">
             <UploadCloud className="w-10 h-10" />
