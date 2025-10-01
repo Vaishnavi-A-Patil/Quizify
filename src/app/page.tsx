@@ -9,11 +9,11 @@ import {
 import type { Session } from '@/lib/types';
 import { generateQuizAction, refineQuizAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
-import { UploadView } from '@/components/quiz-distiller/upload-view';
-import { QuizView } from '@/components/quiz-distiller/quiz-view';
-import { ChatView } from '@/components/quiz-distiller/chat-view';
-import { AppHeader } from '@/components/quiz-distiller/header';
-import { SidebarContent } from '@/components/quiz-distiller/sidebar-content';
+import { UploadView } from '@/components/quizify/upload-view';
+import { QuizView } from '@/components/quizify/quiz-view';
+import { ChatView } from '@/components/quizify/chat-view';
+import { AppHeader } from '@/components/quizify/header';
+import { SidebarContent } from '@/components/quizify/sidebar-content';
 
 export default function Home() {
   const [sessions, setSessions] = React.useState<Session[]>([]);
