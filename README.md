@@ -2,7 +2,7 @@
 
 Quizify is an intelligent quiz generation application that transforms your documents, videos, and text into interactive multiple-choice quizzes. Powered by generative AI, Quizify makes learning and assessment more engaging and efficient.
 
-![Quizify Screenshot](https://storage.googleapis.com/aifirebase.appspot.com/stάρt-1709605282/static/quizify.png)
+![Quizify Screenshot](image.png)
 
 ## ✨ Features
 
