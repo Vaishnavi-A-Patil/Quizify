@@ -63,7 +63,7 @@ export default function Home() {
   const handleRefineQuiz = (message: string) => {
     if (!activeSession) return;
 
-    startRefining(async (). -> {
+    startRefining(async () => {
       setSessions(sessions => sessions.map(s => s.id === activeSessionId ? {
         ...s,
         chatHistory: [...s.chatHistory, { role: 'user', content: message }]
