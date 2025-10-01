@@ -166,9 +166,9 @@ export function UploadView({ onGenerate, loading }: UploadViewProps) {
           ) : (
             <Tabs defaultValue="file">
               <TabsList className="grid w-full grid-cols-3 mb-6">
-                <TabsTrigger value="file"><UploadCloud className="mr-2"/>From File</TabsTrigger>
-                <TabsTrigger value="url"><Link className="mr-2"/>From URL</TabsTrigger>
-                <TabsTrigger value="text"><FileText className="mr-2"/>From Text</TabsTrigger>
+                <TabsTrigger value="file" className="flex items-center justify-center gap-2"><UploadCloud className="h-4 w-4"/>From File</TabsTrigger>
+                <TabsTrigger value="url" className="flex items-center justify-center gap-2"><Link className="h-4 w-4"/>From URL</TabsTrigger>
+                <TabsTrigger value="text" className="flex items-center justify-center gap-2"><FileText className="h-4 w-4"/>From Text</TabsTrigger>
               </TabsList>
               <TabsContent value="file">
                 <FileUpload 
