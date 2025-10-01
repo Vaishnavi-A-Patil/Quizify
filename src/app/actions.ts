@@ -5,6 +5,7 @@ import { refineQuiz } from '@/ai/flows/refine-quiz-via-chat';
 import type { QuizQuestion, Session } from '@/lib/types';
 import { z } from 'zod';
 import pdf from 'pdf-parse/lib/pdf-parse';
+import { generateQuizFromYoutube } from '@/ai/flows/generate-quiz-from-youtube';
 
 async function extractTextFromPdf(fileContentBase64: string): Promise<string> {
   try {
@@ -18,19 +19,33 @@ async function extractTextFromPdf(fileContentBase64: string): Promise<string> {
 }
 
 export async function generateQuizAction(
-  fileName: string,
-  fileContent: string
+  inputType: 'file' | 'url',
+  data: string,
+  fileName?: string
 ): Promise<Omit<Session, 'id' | 'createdAt'>> {
   try {
-    const pdfText = await extractTextFromPdf(fileContent);
-    const quizData = await generateQuizFromPdf({ pdfText });
+    let quizData;
+    let sessionFileName;
+
+    if (inputType === 'file') {
+      if (!fileName) throw new Error('File name is required for file uploads.');
+      const pdfText = await extractTextFromPdf(data);
+      quizData = await generateQuizFromPdf({ pdfText });
+      sessionFileName = fileName;
+    } else if (inputType === 'url') {
+      const youtubeData = await generateQuizFromYoutube({ youtubeUrl: data });
+      quizData = { quizQuestions: youtubeData.quizQuestions };
+      sessionFileName = youtubeData.videoTitle;
+    } else {
+      throw new Error('Invalid input type for quiz generation.');
+    }
     
     if (!quizData || !quizData.quizQuestions) {
       throw new Error('Failed to generate quiz.');
     }
 
     return {
-      fileName,
+      fileName: sessionFileName,
       quiz: quizData.quizQuestions,
       chatHistory: [],
       selectedAnswers: Array(quizData.quizQuestions.length).fill(null),

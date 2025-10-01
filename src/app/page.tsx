@@ -28,10 +28,18 @@ export default function Home() {
     return sessions.find((session) => session.id === activeSessionId) ?? null;
   }, [sessions, activeSessionId]);
 
-  const handleGenerateQuiz = (fileName: string, fileContent: string) => {
+  const handleGenerateQuiz = (
+    inputType: 'file' | 'url',
+    data: string,
+    fileName?: string
+  ) => {
     startGeneration(async () => {
       try {
-        const newSessionData = await generateQuizAction(fileName, fileContent);
+        const newSessionData = await generateQuizAction(
+          inputType,
+          data,
+          fileName
+        );
         const newSession: Session = {
           ...newSessionData,
           id: `session-${Date.now()}`,
@@ -44,7 +52,9 @@ export default function Home() {
           variant: 'destructive',
           title: 'Error',
           description:
-            error instanceof Error ? error.message : 'An unknown error occurred.',
+            error instanceof Error
+              ? error.message
+              : 'An unknown error occurred.',
         });
       }
     });
@@ -53,7 +63,7 @@ export default function Home() {
   const handleRefineQuiz = (message: string) => {
     if (!activeSession) return;
 
-    startRefining(async () => {
+    startRefining(async (). -> {
       setSessions(sessions => sessions.map(s => s.id === activeSessionId ? {
         ...s,
         chatHistory: [...s.chatHistory, { role: 'user', content: message }]

@@ -10,11 +10,11 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 
 type UploadViewProps = {
-  onGenerate: (fileName: string, fileContent: string) => void;
+  onGenerate: (inputType: 'file' | 'url' | 'text', data: string, fileName?: string) => void;
   loading: boolean;
 };
 
-function FileUpload({ onGenerate, loading }: UploadViewProps) {
+function FileUpload({ onGenerate, loading }: Omit<UploadViewProps, 'onGenerate'> & { onGenerate: (fileName: string, fileContent: string) => void }) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -56,7 +56,7 @@ function FileUpload({ onGenerate, loading }: UploadViewProps) {
     >
       <UploadCloud className="w-12 h-12 text-muted-foreground" />
       <p className="mt-4 text-center text-muted-foreground">
-        Click or drag & drop to upload a file.<br />(PDF, DOCX, TXT, etc.)
+        Click or drag & drop to upload a file.<br />(Only PDF is currently supported)
       </p>
       <input
         type="file"
@@ -68,6 +68,56 @@ function FileUpload({ onGenerate, loading }: UploadViewProps) {
       />
     </div>
   );
+}
+
+function UrlUpload({ onGenerate, loading }: Omit<UploadViewProps, 'onGenerate'> & { onGenerate: (url: string) => void }) {
+    const [youtubeUrl, setYoutubeUrl] = React.useState('');
+    const [otherUrl, setOtherUrl] = React.useState('');
+    const { toast } = useToast();
+
+    const handleGenerate = () => {
+        if (youtubeUrl) {
+            onGenerate(youtubeUrl);
+        } else if (otherUrl) {
+            toast({
+                title: 'Feature Not Implemented',
+                description: 'Quiz generation from general URLs is coming soon!',
+            });
+        }
+    }
+
+    return (
+        <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2">
+                <Youtube className="text-red-500 w-6 h-6" />
+                <Input 
+                    placeholder="Enter a YouTube URL..." 
+                    value={youtubeUrl}
+                    onChange={(e) => {
+                        setYoutubeUrl(e.target.value);
+                        if (e.target.value) setOtherUrl('');
+                    }}
+                    disabled={loading}
+                />
+            </div>
+            <div className="flex items-center gap-2">
+                <Link className="text-muted-foreground w-6 h-6" />
+                <Input 
+                    placeholder="Enter any other URL..."
+                    value={otherUrl}
+                    onChange={(e) => {
+                        setOtherUrl(e.target.value)
+                        if (e.target.value) setYoutubeUrl('');
+                    }}
+                    disabled={loading}
+                />
+            </div>
+            <Button onClick={handleGenerate} disabled={loading || (!youtubeUrl && !otherUrl)}>
+                {loading ? <Loader2 className="mr-2 animate-spin" /> : null}
+                Generate from URL
+            </Button>
+        </div>
+    )
 }
 
 
@@ -109,20 +159,16 @@ export function UploadView({ onGenerate, loading }: UploadViewProps) {
                 <TabsTrigger value="text"><FileText className="mr-2"/>From Text</TabsTrigger>
               </TabsList>
               <TabsContent value="file">
-                <FileUpload onGenerate={onGenerate} loading={loading} />
+                <FileUpload 
+                  onGenerate={(fileName, fileContent) => onGenerate('file', fileContent, fileName)} 
+                  loading={loading} 
+                />
               </TabsContent>
               <TabsContent value="url">
-                <div className="flex flex-col gap-4">
-                    <div className="flex items-center gap-2">
-                        <Youtube className="text-red-500 w-6 h-6" />
-                        <Input placeholder="Enter a YouTube URL..." />
-                    </div>
-                     <div className="flex items-center gap-2">
-                        <Link className="text-muted-foreground w-6 h-6" />
-                        <Input placeholder="Enter any other URL..." />
-                    </div>
-                    <Button onClick={showNotImplementedToast}>Generate from URL</Button>
-                </div>
+                <UrlUpload 
+                  onGenerate={(url) => onGenerate('url', url)}
+                  loading={loading}
+                />
               </TabsContent>
               <TabsContent value="text">
                 <div className="flex flex-col gap-4">
